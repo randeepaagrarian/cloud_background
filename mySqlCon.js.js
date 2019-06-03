@@ -1,5 +1,7 @@
 const mysql = require('mysql')
 
+const args = require('yargs').argv
+
 const MySql = module.exports = {}
 
 // const args = require('yargs').argv;
