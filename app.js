@@ -9,10 +9,15 @@ const Func = require('./func')
 const args = require('yargs').argv
 
 let taskReportScheduler = new schedule.RecurrenceRule()
+let incompleteSalesReportScheduler = new schedule.RecurrenceRule()
 
 taskReportScheduler.second = 0
-taskReportScheduler.minute = args.sendTaskReportMinute
-taskReportScheduler.hour = args.sendTaskReportHour
+taskReportScheduler.minute = 0
+taskReportScheduler.hour = 6
+
+incompleteSalesReportScheduler.second = 0
+incompleteSalesReportScheduler.minute = 0
+incompleteSalesReportScheduler.hour = 6
 
 let sendTaskReport = schedule.scheduleJob(taskReportScheduler, function() {
     console.log(Func.getDateTime() + " Scheduling sendTaskReport()")
@@ -85,5 +90,54 @@ let sendTaskReport = schedule.scheduleJob(taskReportScheduler, function() {
             }
         })
 
+    })
+})
+
+let sendIncompleteSalesReport = schedule.scheduleJob(incompleteSalesReportScheduler, function() {
+    console.log(Func.getDateTime() + " Scheduling sendIncompleteSalesReport()")
+    async.series([
+        function(callback) {
+            Database.getIncompleteSalesFor2019(callback)
+        }
+    ], function(err, data) {
+
+        const sales = data[0]
+
+        let HTMLString = "<html><head><style> body { font-family: arial, sans-serif; } table { border-collapse: collapse; width: 100%; } td, th { border: 1px solid #dddddd; text-align: left; padding: 8px; } </style></head><body>";
+
+        HTMLString = HTMLString + "<h4>Incomplete Sales for 2019</h4>"
+        HTMLString = HTMLString + "<p>There are <b>" + sales.length + "</b> incomplete sales for 2019</p>"
+
+        HTMLString = HTMLString +  "<table><thead> <th>ID</th> <th>Officer</th> <th>Date</th> <th>Cloud Date</th> <th>Pending For</th> <th>Dealer Name</th> <th>Chassis No</th> <th>Customer Name</th> <th>Customer Contact</th> <th>Sale Type</th> </thead> <tbody>"
+        for(let i = 0; i < sales.length; i++) {
+            HTMLString = HTMLString + "<tr><td>" + sales[i].id + "</td><td>" + sales[i].officer + "</td><td>" + sales[i].date + "</td><td>" + sales[i].sys_date + "</td><td>" + sales[i].pending_for + " days</td><td>" + sales[i].dealer_name + "</td><td>" + sales[i].chassis_no + "</td><td>" + sales[i].customer_name + "</td><td>" + sales[i].customer_contact + "</td><td>" + sales[i].sale_type + "</td></tr>"
+        }
+
+        HTMLString = HTMLString + "</tbody></table></body></html>"
+
+        let transporter = nodemailer.createTransport({
+            host: 'smtp.zoho.com',
+            port: 465,
+            secure: true,
+            auth: {
+                user: 'admin@randeepa.cloud',
+                pass: args.adminEmailPassword
+            }
+        })
+
+        const mailOptions = {
+            from: 'Randeepa Cloud <admin@randeepa.cloud>',
+            to: 'shamal@randeepa.com, dimuthu@randeepa.com, berty.randeepa@gmail.com, muditha@randeepa.com, prasad.randeepa@gmail.com',
+            subject: 'Incomplete Sales for 2019',
+            html: HTMLString
+        }
+
+        transporter.sendMail(mailOptions, function(err) {
+            if(err) {
+                console.log(err)
+            } else {
+                console.log(Func.getDateTime() + " sendIncompleteSalesReport() complete")
+            }
+        })
     })
 })
