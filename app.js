@@ -127,7 +127,7 @@ let sendIncompleteSalesReport = schedule.scheduleJob(incompleteSalesReportSchedu
 
         const mailOptions = {
             from: 'Randeepa Cloud <admin@randeepa.cloud>',
-            to: 'shamal@randeepa.com, dimuthu@randeepa.com, berty.randeepa@gmail.com, muditha@randeepa.com, prasad.randeepa@gmail.com, manukarandeepa@gmail.com',
+            to: 'shamal@randeepa.com, dimuthu@randeepa.com, berty.randeepa@gmail.com, muditha@randeepa.com, prasad.randeepa@gmail.com, manukarandeepa@gmail.com, madushika.randeepa97@gmail.com',
             subject: 'Incomplete Sales from 2018-09',
             html: HTMLString
         }
