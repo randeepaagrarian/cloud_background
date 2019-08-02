@@ -8,18 +8,13 @@ const Func = require('./func')
 
 const args = require('yargs').argv
 
-let taskReportScheduler = new schedule.RecurrenceRule()
-let incompleteSalesReportScheduler = new schedule.RecurrenceRule()
+let reportScheduler = new schedule.RecurrenceRule()
 
-taskReportScheduler.second = 0
-taskReportScheduler.minute = 0
-taskReportScheduler.hour = 6
+reportScheduler.second = 0
+reportScheduler.minute = 0
+reportScheduler.hour = 6
 
-incompleteSalesReportScheduler.second = 0
-incompleteSalesReportScheduler.minute = 0
-incompleteSalesReportScheduler.hour = 6
-
-let sendTaskReport = schedule.scheduleJob(taskReportScheduler, function() {
+let sendTaskReport = schedule.scheduleJob(reportScheduler, function() {
     console.log(Func.getDateTime() + " Scheduling sendTaskReport()")
     async.series([
         function(callback) {
@@ -93,7 +88,7 @@ let sendTaskReport = schedule.scheduleJob(taskReportScheduler, function() {
     })
 })
 
-let sendIncompleteSalesReport = schedule.scheduleJob(incompleteSalesReportScheduler, function() {
+let sendIncompleteSalesReport = schedule.scheduleJob(reportScheduler, function() {
     console.log(Func.getDateTime() + " Scheduling sendIncompleteSalesReport()")
     async.series([
         function(callback) {
@@ -137,6 +132,60 @@ let sendIncompleteSalesReport = schedule.scheduleJob(incompleteSalesReportSchedu
                 console.log(err)
             } else {
                 console.log(Func.getDateTime() + " sendIncompleteSalesReport() complete")
+            }
+        })
+    })
+})
+
+let sendPendingServicesReport = schedule.scheduleJob(reportScheduler, function() {
+    console.log(Func.getDateTime() + " Scheduling sendPendingServicesReport()")
+    async.series([
+        function(callback) {
+            Database.getPendingServices(callback)
+        }
+    ], function(err, data) {
+
+        const sales = data[0]
+
+        let HTMLString = "<html><head><style> body { font-family: arial, sans-serif; } table { border-collapse: collapse; width: 100%; } td, th { border: 1px solid #dddddd; text-align: left; padding: 8px; } </style></head><body>";
+
+        HTMLString = HTMLString + "<h2 style='font-family: Arial, Helvetica, sans-serif;'>Pending Services</h2>"
+        HTMLString = HTMLString + "<p>There are <b>" + sales.length + "</b> pending services</p>"
+
+        HTMLString = HTMLString +  "<table><thead> <th>ID</th> <th>Date</th> <th>Pending For</th> <th>Issue</th> <th>Technician</th> <th>Sale Date</th> <th>Chassis No</th> <th>Model</th>  <th>Customer Name</th> <th>Customer Contact</th></thead> <tbody>"
+        for(let i = 0; i < sales.length; i++) {
+            if(i % 2 == 0) {
+                HTMLString = HTMLString + "<tr style='background-color: #f2f2f2;'>"
+            } else {
+                HTMLString = HTMLString + "<tr style='background: #FFF;'>"
+            }
+            HTMLString = HTMLString + "<td>" + sales[i].id + "</td><td>" + sales[i].date + "</td><td><font color='red'>" + sales[i].days + " days</font></td><td>" + sales[i].issue + "</td><td>" + sales[i].technician_name + "</td><td>" + sales[i].s_sale_date + "</td><td>" + sales[i].s_chassis_no + "</td><td>" + sales[i].s_model_name + "</td><td>" + sales[i].s_customer_name + "</td><td>" + sales[i].s_customer_contact + "</td></tr>"
+        }
+
+        HTMLString = HTMLString + "</tbody></table></body></html>"
+
+        let transporter = nodemailer.createTransport({
+            host: 'smtp.zoho.com',
+            port: 465,
+            secure: true,
+            auth: {
+                user: 'admin@randeepa.cloud',
+                pass: args.adminEmailPassword
+            }
+        })
+
+        const mailOptions = {
+            from: 'Randeepa Cloud <admin@randeepa.cloud>',
+            to: 'shamal@randeepa.com, 123dilanka@gmail.com, dimuthu@randeepa.com, berty.randeepa@gmail.com, muditha@randeepa.com',
+            subject: 'Pending Services',
+            html: HTMLString
+        }
+
+        transporter.sendMail(mailOptions, function(err) {
+            if(err) {
+                console.log(err)
+            } else {
+                console.log(Func.getDateTime() + " sendPendingServicesReport() complete")
             }
         })
     })
