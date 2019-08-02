@@ -97,7 +97,7 @@ let sendIncompleteSalesReport = schedule.scheduleJob(incompleteSalesReportSchedu
     console.log(Func.getDateTime() + " Scheduling sendIncompleteSalesReport()")
     async.series([
         function(callback) {
-            Database.getIncompleteSalesFrom201809(callback)
+            Database.getIncompleteSalesFrom201806(callback)
         }
     ], function(err, data) {
 
@@ -105,8 +105,8 @@ let sendIncompleteSalesReport = schedule.scheduleJob(incompleteSalesReportSchedu
 
         let HTMLString = "<html><head><style> body { font-family: arial, sans-serif; } table { border-collapse: collapse; width: 100%; } td, th { border: 1px solid #dddddd; text-align: left; padding: 8px; } </style></head><body>";
 
-        HTMLString = HTMLString + "<h4>Incomplete Sales from 2018-09</h4>"
-        HTMLString = HTMLString + "<p>There are <b>" + sales.length + "</b> incomplete sales from 2018-09</p>"
+        HTMLString = HTMLString + "<h4>Incomplete Sales from 2018-06</h4>"
+        HTMLString = HTMLString + "<p>There are <b>" + sales.length + "</b> incomplete sales from 2018-06</p>"
 
         HTMLString = HTMLString +  "<table><thead> <th>ID</th> <th>Officer</th> <th>Date</th> <th>Cloud Date</th> <th>Pending For</th> <th>Dealer Name</th> <th>Chassis No</th> <th>Customer Name</th> <th>Customer Contact</th> <th>Sale Type</th> </thead> <tbody>"
         for(let i = 0; i < sales.length; i++) {
