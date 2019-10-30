@@ -2,6 +2,7 @@ const async = require('async')
 const fs = require('fs')
 const nodemailer = require('nodemailer')
 const schedule = require('node-schedule')
+const request = require('request')
 
 const Database = require('./database')
 const Func = require('./func')
@@ -122,7 +123,7 @@ let sendIncompleteSalesReport = schedule.scheduleJob(reportScheduler, function()
 
         const mailOptions = {
             from: 'Randeepa Cloud <admin@randeepa.cloud>',
-            to: 'shamal@randeepa.com, dimuthu@randeepa.com, berty.randeepa@gmail.com, muditha@randeepa.com, prasad.randeepa@gmail.com, manukarandeepa@gmail.com, madushika.randeepa97@gmail.com',
+            to: 'shamal@randeepa.com, dimuthu@randeepa.com, berty.randeepa@gmail.com, muditha@randeepa.com, prasad.randeepa@gmail.com, manukarandeepa@gmail.com',
             subject: 'Incomplete Sales from 2018-06',
             html: HTMLString
         }
@@ -188,5 +189,27 @@ let sendPendingServicesReport = schedule.scheduleJob(reportScheduler, function()
                 console.log(Func.getDateTime() + " sendPendingServicesReport() complete")
             }
         })
+    })
+})
+
+let sendPendingServicesTextMessages = schedule.scheduleJob(reportScheduler, function() {
+    console.log(Func.getDateTime() + " Scheduling sendPendingServicesTextMessages()")
+    async.series([
+        function(callback) {
+            Database.getPendingServicesByTechnician(callback)
+        }
+    ], function(err, data) {
+        let api = '15572917316573'
+
+        let rawData = data[0]
+
+        for(let i = 0; i < rawData.length;  i++) {
+            let message = 'Good Morning, ' + rawData[i].technician_name + ". Your pending services are " + rawData[i].service_ids
+            request('https://cpsolutions.dialog.lk/index.php/cbs/sms/send?destination=' + rawData[i].telephone + '&q=' + api + '&message=' + message, { json: true }, function(err, res, body) {
+
+            })
+        }
+
+        console.log(Func.getDateTime() + " sendPendingServicesTextMessages() complete")
     })
 })

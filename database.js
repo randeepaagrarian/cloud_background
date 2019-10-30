@@ -81,3 +81,19 @@ Database.getPendingServices = function(callback) {
         })
     })
 }
+
+Database.getPendingServicesByTechnician = function(callback) {
+    MySql.pool.getConnection(function(pool_err, connection) {
+        if(pool_err) {
+            return callback(pool_err, null)
+        }
+
+        connection.query('SELECT U.name as technician_name, U.telephone, GROUP_CONCAT(S.id) service_ids FROM service S LEFT JOIN user U ON S.technician_id = U.username WHERE DATE(S.date) > \'2019-06-01\' AND S.service_completed = 0 AND U.name IS NOT NULL AND U.telephone IS NOT NULL GROUP BY technician_name, U.telephone', function(err, rows, fields) {
+            connection.release()
+            if(err) {
+                return callback(err, null)
+            }
+            callback(err, rows)
+        })
+    })
+}
