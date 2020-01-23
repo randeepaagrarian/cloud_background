@@ -56,7 +56,7 @@ Database.getIncompleteSalesFrom201806 = function(callback) {
             return callback(pool_err, null)
         }
 
-        connection.query('SELECT sale.id, user.name as officer, date, sys_date, DATEDIFF(NOW(), sale.sys_date) as pending_for, dealer.name as dealer_name, chassis_no, customer_name, customer_contact, sale_type.name as sale_type FROM sale LEFT JOIN dealer ON sale.location_fk = dealer.id LEFT JOIN user ON sale.officer = user.username LEFT JOIN sale_type ON sale.sale_type = sale_type.id WHERE sale_completed = 0 AND DATE(sys_date) >= \'2018-06-01\' ORDER BY id ASC;', function(err, rows, fields) {
+        connection.query('SELECT sale.id, user.name as officer, date, sys_date, DATEDIFF(NOW(), sale.sys_date) as pending_for, dealer.name as dealer_name, chassis_no, customer_name, customer_contact, sale_type.name as sale_type FROM sale LEFT JOIN dealer ON sale.location_fk = dealer.id LEFT JOIN user ON sale.officer = user.username LEFT JOIN sale_type ON sale.sale_type = sale_type.id WHERE sale_completed = 0 AND DATE(sys_date) >= \'2018-06-01\' AND sale.deleted = 0 ORDER BY id ASC;', function(err, rows, fields) {
             connection.release()
             if(err) {
                 return callback(err, null)
