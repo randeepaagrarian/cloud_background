@@ -177,7 +177,7 @@ let sendPendingServicesReport = schedule.scheduleJob(reportScheduler, function()
 
         const mailOptions = {
             from: 'Randeepa Cloud <admin@randeepa.cloud>',
-            to: 'shamal@randeepa.com, 123dilanka@gmail.com, dimuthu@randeepa.com, berty.randeepa@gmail.com, muditha@randeepa.com',
+            to: 'shamal@randeepa.com, 123dilanka@gmail.com, dimuthu@randeepa.com, berty.randeepa@gmail.com, muditha@randeepa.com, sewwandieu@yahoo.com',
             subject: 'Pending Services',
             html: HTMLString
         }
