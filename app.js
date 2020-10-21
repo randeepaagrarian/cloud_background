@@ -73,7 +73,7 @@ let sendTaskReport = schedule.scheduleJob(reportScheduler, function() {
 
         const mailOptions = {
             from: 'Randeepa Cloud <admin@randeepa.cloud>',
-            to: 'shamal@randeepa.com, dimuthu@randeepa.com',
+            to: 'shamal@randeepa.com, dimuthu@randeepa.com, rukmalpolo@gmail.com, samantha@randeepa.com, erangarandeepa@gmail.com',
             subject: 'Daily Task Summary for ' + Func.getYesterday('-'),
             html: HTMLString
         }
@@ -123,7 +123,7 @@ let sendIncompleteSalesReport = schedule.scheduleJob(reportScheduler, function()
 
         const mailOptions = {
             from: 'Randeepa Cloud <admin@randeepa.cloud>',
-            to: 'shamal@randeepa.com, dimuthu@randeepa.com, chula196379@gmail.com, rukmalpolo@gmail.com, berty.randeepa@gmail.com, muditha@randeepa.com, prasad.randeepa@gmail.com, manukarandeepa@gmail.com',
+            to: 'shamal@randeepa.com, dimuthu@randeepa.com, rukmalpolo@gmail.com, samantha@randeepa.com, erangarandeepa@gmail.com, prasad.randeepa@gmail.com',
             subject: 'Incomplete Sales from 2018-06',
             html: HTMLString
         }
@@ -177,7 +177,7 @@ let sendPendingServicesReport = schedule.scheduleJob(reportScheduler, function()
 
         const mailOptions = {
             from: 'Randeepa Cloud <admin@randeepa.cloud>',
-            to: 'shamal@randeepa.com, dimuthu@randeepa.com, muditha@randeepa.com, sewwandieu@yahoo.com, mudithapolo@gmail.com',
+            to: 'shamal@randeepa.com, dimuthu@randeepa.com, erangarandeepa@gmail.com, sewwandieu@yahoo.com, 123dilanka@gmail.com',
             subject: 'Pending Services',
             html: HTMLString
         }
