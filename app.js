@@ -12,8 +12,8 @@ const args = require('yargs').argv
 let reportScheduler = new schedule.RecurrenceRule()
 
 reportScheduler.second = 0
-reportScheduler.minute = 0
-reportScheduler.hour = 6
+reportScheduler.minute = 30
+reportScheduler.hour = 16
 
 let sendTaskReport = schedule.scheduleJob(reportScheduler, function() {
     console.log(Func.getDateTime() + " Scheduling sendTaskReport()")
@@ -101,8 +101,8 @@ let sendIncompleteSalesReport = schedule.scheduleJob(reportScheduler, function()
 
         let HTMLString = "<html><head><style> body { font-family: arial, sans-serif; } table { border-collapse: collapse; width: 100%; } td, th { border: 1px solid #dddddd; text-align: left; padding: 8px; } </style></head><body>";
 
-        HTMLString = HTMLString + "<h4>Incomplete Sales from 2018-06</h4>"
-        HTMLString = HTMLString + "<p>There are <b>" + sales.length + "</b> incomplete sales from 2018-06</p>"
+        HTMLString = HTMLString + "<h4>Incomplete Sales from 2018-06 to 2020-10-18</h4>"
+        HTMLString = HTMLString + "<p>There are <b>" + sales.length + "</b> incomplete sales from 2018-06 to 2020-10-18</p>"
 
         HTMLString = HTMLString +  "<table><thead> <th>ID</th> <th>Officer</th> <th>Date</th> <th>Cloud Date</th> <th>Pending For</th> <th>Dealer Name</th> <th>Chassis No</th> <th>Customer Name</th> <th>Customer Contact</th> <th>Sale Type</th> </thead> <tbody>"
         for(let i = 0; i < sales.length; i++) {
@@ -124,7 +124,7 @@ let sendIncompleteSalesReport = schedule.scheduleJob(reportScheduler, function()
         const mailOptions = {
             from: 'Randeepa Cloud <admin@randeepa.cloud>',
             to: 'shamal@randeepa.com, dimuthu@randeepa.com, rukmalpolo@gmail.com, samantha@randeepa.com, erangarandeepa@gmail.com, prasad.randeepa@gmail.com',
-            subject: 'Incomplete Sales from 2018-06',
+            subject: 'Incomplete Sales from 2018-06 to 2020-10-18',
             html: HTMLString
         }
 
@@ -133,6 +133,55 @@ let sendIncompleteSalesReport = schedule.scheduleJob(reportScheduler, function()
                 console.log(err)
             } else {
                 console.log(Func.getDateTime() + " sendIncompleteSalesReport() complete")
+            }
+        })
+    })
+})
+
+let sendIncompleteSalesReportNewManagement = schedule.scheduleJob(reportScheduler, function() {
+    console.log(Func.getDateTime() + " Scheduling sendIncompleteSalesReportNewManagement()")
+    async.series([
+        function(callback) {
+            Database.getIncompleteSalesNewManagement(callback)
+        }
+    ], function(err, data) {
+
+        const sales = data[0]
+
+        let HTMLString = "<html><head><style> body { font-family: arial, sans-serif; } table { border-collapse: collapse; width: 100%; } td, th { border: 1px solid #dddddd; text-align: left; padding: 8px; } </style></head><body>";
+
+        HTMLString = HTMLString + "<h4>[NEW MANAGEMENT] Incomplete Sales from 2020-10-19</h4>"
+        HTMLString = HTMLString + "<p>There are <b>" + sales.length + "</b> incomplete sales from 2020-10-19</p>"
+
+        HTMLString = HTMLString +  "<table><thead> <th>ID</th> <th>Officer</th> <th>Date</th> <th>Cloud Date</th> <th>Pending For</th> <th>Dealer Name</th> <th>Chassis No</th> <th>Customer Name</th> <th>Customer Contact</th> <th>Sale Type</th> </thead> <tbody>"
+        for(let i = 0; i < sales.length; i++) {
+            HTMLString = HTMLString + "<tr><td>" + sales[i].id + "</td><td>" + sales[i].officer + "</td><td>" + sales[i].date + "</td><td>" + sales[i].sys_date + "</td><td>" + sales[i].pending_for + " days</td><td>" + sales[i].dealer_name + "</td><td>" + sales[i].chassis_no + "</td><td>" + sales[i].customer_name + "</td><td>" + sales[i].customer_contact + "</td><td>" + sales[i].sale_type + "</td></tr>"
+        }
+
+        HTMLString = HTMLString + "</tbody></table></body></html>"
+
+        let transporter = nodemailer.createTransport({
+            host: 'smtp.zoho.com',
+            port: 465,
+            secure: true,
+            auth: {
+                user: 'admin@randeepa.cloud',
+                pass: args.adminEmailPassword
+            }
+        })
+
+        const mailOptions = {
+            from: 'Randeepa Cloud <admin@randeepa.cloud>',
+            to: 'shamal@randeepa.com, dimuthu@randeepa.com, rukmalpolo@gmail.com, samantha@randeepa.com, erangarandeepa@gmail.com, prasad.randeepa@gmail.com',
+            subject: '[NEW MANAGEMENT] Incomplete Sales from 2020-10-19',
+            html: HTMLString
+        }
+
+        transporter.sendMail(mailOptions, function(err) {
+            if(err) {
+                console.log(err)
+            } else {
+                console.log(Func.getDateTime() + " sendIncompleteSalesReportNewManagement() complete")
             }
         })
     })
