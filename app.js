@@ -12,8 +12,8 @@ const args = require('yargs').argv
 let reportScheduler = new schedule.RecurrenceRule()
 
 reportScheduler.second = 0
-reportScheduler.minute = 30
-reportScheduler.hour = 16
+reportScheduler.minute = 0
+reportScheduler.hour = 6
 
 let sendTaskReport = schedule.scheduleJob(reportScheduler, function() {
     console.log(Func.getDateTime() + " Scheduling sendTaskReport()")
