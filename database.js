@@ -113,3 +113,19 @@ Database.getPendingServicesByTechnician = function(callback) {
         })
     })
 }
+
+Database.getUnauditedStockReviews = function(callback) {
+    MySql.pool.getConnection(function(pool_err, connection) {
+        if(pool_err) {
+            return callback(pool_err, null)
+        }
+
+        connection.query('SELECT SR.id, SR.created, U.name AS user, SR.dealer_id, D.name AS dealer, SR.remark, SR.picture, SR.audited FROM stock_review SR LEFT JOIN user U ON U.username = SR.username LEFT JOIN dealer D ON D.id = SR.dealer_id WHERE audited = 0 ORDER BY SR.created DESC', function(err, rows, fields) {
+            connection.release()
+            if(err) {
+                return callback(err, null)
+            }
+            callback(err, rows)
+        })
+    })
+}

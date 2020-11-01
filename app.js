@@ -74,6 +74,7 @@ let sendTaskReport = schedule.scheduleJob(reportScheduler, function() {
         const mailOptions = {
             from: 'Randeepa Cloud <admin@randeepa.cloud>',
             to: 'shamal@randeepa.com, dimuthu@randeepa.com, rukmalpolo@gmail.com, samantha@randeepa.com, erangarandeepa@gmail.com',
+            // to: 'shamal@randeepa.com',
             subject: 'Daily Task Summary for ' + Func.getYesterday('-'),
             html: HTMLString
         }
@@ -106,7 +107,12 @@ let sendIncompleteSalesReport = schedule.scheduleJob(reportScheduler, function()
 
         HTMLString = HTMLString +  "<table><thead> <th>ID</th> <th>Officer</th> <th>Date</th> <th>Cloud Date</th> <th>Pending For</th> <th>Dealer Name</th> <th>Chassis No</th> <th>Customer Name</th> <th>Customer Contact</th> <th>Sale Type</th> </thead> <tbody>"
         for(let i = 0; i < sales.length; i++) {
-            HTMLString = HTMLString + "<tr><td>" + sales[i].id + "</td><td>" + sales[i].officer + "</td><td>" + sales[i].date + "</td><td>" + sales[i].sys_date + "</td><td>" + sales[i].pending_for + " days</td><td>" + sales[i].dealer_name + "</td><td>" + sales[i].chassis_no + "</td><td>" + sales[i].customer_name + "</td><td>" + sales[i].customer_contact + "</td><td>" + sales[i].sale_type + "</td></tr>"
+            if(i % 2 == 0) {
+                HTMLString = HTMLString + "<tr style='background-color: #f2f2f2;'>"
+            } else {
+                HTMLString = HTMLString + "<tr style='background: #FFF;'>"
+            }
+            HTMLString = HTMLString + "<td><a href='https://www.randeepa.cloud/sale/cloudIDInfo?cloudID=" + sales[i].id + "'>" + sales[i].id + "</a>" + "</td><td>" + sales[i].officer + "</td><td>" + sales[i].date + "</td><td>" + sales[i].sys_date + "</td><td>" + sales[i].pending_for + " days</td><td>" + sales[i].dealer_name + "</td><td>" + sales[i].chassis_no + "</td><td>" + sales[i].customer_name + "</td><td>" + sales[i].customer_contact + "</td><td>" + sales[i].sale_type + "</td></tr>"
         }
 
         HTMLString = HTMLString + "</tbody></table></body></html>"
@@ -124,6 +130,7 @@ let sendIncompleteSalesReport = schedule.scheduleJob(reportScheduler, function()
         const mailOptions = {
             from: 'Randeepa Cloud <admin@randeepa.cloud>',
             to: 'shamal@randeepa.com, dimuthu@randeepa.com, rukmalpolo@gmail.com, samantha@randeepa.com, erangarandeepa@gmail.com, prasad.randeepa@gmail.com',
+            // to: 'shamal@randeepa.com',
             subject: 'Incomplete Sales from 2018-06 to 2020-10-18',
             html: HTMLString
         }
@@ -155,7 +162,12 @@ let sendIncompleteSalesReportNewManagement = schedule.scheduleJob(reportSchedule
 
         HTMLString = HTMLString +  "<table><thead> <th>ID</th> <th>Officer</th> <th>Date</th> <th>Cloud Date</th> <th>Pending For</th> <th>Dealer Name</th> <th>Chassis No</th> <th>Customer Name</th> <th>Customer Contact</th> <th>Sale Type</th> </thead> <tbody>"
         for(let i = 0; i < sales.length; i++) {
-            HTMLString = HTMLString + "<tr><td>" + sales[i].id + "</td><td>" + sales[i].officer + "</td><td>" + sales[i].date + "</td><td>" + sales[i].sys_date + "</td><td>" + sales[i].pending_for + " days</td><td>" + sales[i].dealer_name + "</td><td>" + sales[i].chassis_no + "</td><td>" + sales[i].customer_name + "</td><td>" + sales[i].customer_contact + "</td><td>" + sales[i].sale_type + "</td></tr>"
+            if(i % 2 == 0) {
+                HTMLString = HTMLString + "<tr style='background-color: #f2f2f2;'>"
+            } else {
+                HTMLString = HTMLString + "<tr style='background: #FFF;'>"
+            }
+            HTMLString = HTMLString + "<td><a href='https://www.randeepa.cloud/sale/cloudIDInfo?cloudID=" + sales[i].id + "'>" + sales[i].id + "</a>" + "</td><td>" + sales[i].officer + "</td><td>" + sales[i].date + "</td><td>" + sales[i].sys_date + "</td><td>" + sales[i].pending_for + " days</td><td>" + sales[i].dealer_name + "</td><td>" + sales[i].chassis_no + "</td><td>" + sales[i].customer_name + "</td><td>" + sales[i].customer_contact + "</td><td>" + sales[i].sale_type + "</td></tr>"
         }
 
         HTMLString = HTMLString + "</tbody></table></body></html>"
@@ -173,6 +185,7 @@ let sendIncompleteSalesReportNewManagement = schedule.scheduleJob(reportSchedule
         const mailOptions = {
             from: 'Randeepa Cloud <admin@randeepa.cloud>',
             to: 'shamal@randeepa.com, dimuthu@randeepa.com, rukmalpolo@gmail.com, samantha@randeepa.com, erangarandeepa@gmail.com, prasad.randeepa@gmail.com',
+            // to: 'shamal@randeepa.com',
             subject: '[NEW MANAGEMENT] Incomplete Sales from 2020-10-19',
             html: HTMLString
         }
@@ -209,7 +222,7 @@ let sendPendingServicesReport = schedule.scheduleJob(reportScheduler, function()
             } else {
                 HTMLString = HTMLString + "<tr style='background: #FFF;'>"
             }
-            HTMLString = HTMLString + "<td>" + sales[i].id + "</td><td>" + sales[i].date + "</td><td><font color='red'>" + sales[i].days + " days</font></td><td>" + sales[i].issue + "</td><td>" + sales[i].technician_name + "</td><td>" + sales[i].s_sale_date + "</td><td>" + sales[i].s_chassis_no + "</td><td>" + sales[i].s_model_name + "</td><td>" + sales[i].s_customer_name + "</td><td>" + sales[i].s_customer_contact + "</td></tr>"
+            HTMLString = HTMLString + "<td><a href='https://www.randeepa.cloud/service/serviceInfo?serviceID="+sales[i].id+"'>"+sales[i].id+"</a>" + "</td><td>" + sales[i].date + "</td><td><font color='red'>" + sales[i].days + " days</font></td><td>" + sales[i].issue + "</td><td>" + sales[i].technician_name + "</td><td>" + sales[i].s_sale_date + "</td><td>" + sales[i].s_chassis_no + "</td><td>" + sales[i].s_model_name + "</td><td>" + sales[i].s_customer_name + "</td><td>" + sales[i].s_customer_contact + "</td></tr>"
         }
 
         HTMLString = HTMLString + "</tbody></table></body></html>"
@@ -227,6 +240,7 @@ let sendPendingServicesReport = schedule.scheduleJob(reportScheduler, function()
         const mailOptions = {
             from: 'Randeepa Cloud <admin@randeepa.cloud>',
             to: 'shamal@randeepa.com, dimuthu@randeepa.com, erangarandeepa@gmail.com, sewwandieu@yahoo.com, 123dilanka@gmail.com',
+            // to: 'shamal@randeepa.com',
             subject: 'Pending Services',
             html: HTMLString
         }
@@ -236,6 +250,75 @@ let sendPendingServicesReport = schedule.scheduleJob(reportScheduler, function()
                 console.log(err)
             } else {
                 console.log(Func.getDateTime() + " sendPendingServicesReport() complete")
+            }
+        })
+    })
+})
+
+let sendUnauditedStockReviews = schedule.scheduleJob(reportScheduler, function() {
+    console.log(Func.getDateTime() + " Scheduling sendUnauditedStockReviews()")
+    async.series([
+        function(callback) {
+            Database.getUnauditedStockReviews(callback)
+        }
+    ], function(err, data) {
+
+        const sales = data[0]
+
+        let HTMLString = "<html><head><style> body { font-family: arial, sans-serif; } table { border-collapse: collapse; width: 100%; } td, th { border: 1px solid #dddddd; text-align: left; padding: 8px; } </style></head><body>";
+
+        HTMLString = HTMLString + "<h2 style='font-family: Arial, Helvetica, sans-serif;'>Unaudited Stock Reviews</h2>"
+        HTMLString = HTMLString + "<p>There are <b>" + sales.length + "</b> unaudited stock reviews</p>"
+
+        HTMLString = HTMLString +  `<table><thead> 
+            <th>ID</th> 
+            <th>Added</th> 
+            <th>User</th> 
+            <th>Dealer</th> 
+            <th>Picture</th>
+            <th>Remark</th>
+        </thead> <tbody>`
+        for(let i = 0; i < sales.length; i++) {
+            if(i % 2 == 0) {
+                HTMLString = HTMLString + "<tr style='background-color: #f2f2f2;'>"
+            } else {
+                HTMLString = HTMLString + "<tr style='background: #FFF;'>"
+            }
+            HTMLString = HTMLString + 
+                "<td>" + sales[i].id + "</td><td>" 
+                + sales[i].created + "</td><td>" 
+                + sales[i].user + `</td><td><a href="https://www.randeepa.cloud/stock/viewStock?stockLocation=` + sales[i].dealer_id + `">` 
+                + sales[i].dealer + `</a></td><td><a href="` + sales[i].picture + `">`
+                + "Image</a></td><td>" 
+                + sales[i].remark + "</td>" 
+                + "</tr>"
+        }
+
+        HTMLString = HTMLString + "</tbody></table></body></html>"
+
+        let transporter = nodemailer.createTransport({
+            host: 'smtp.zoho.com',
+            port: 465,
+            secure: true,
+            auth: {
+                user: 'admin@randeepa.cloud',
+                pass: args.adminEmailPassword
+            }
+        })
+
+        const mailOptions = {
+            from: 'Randeepa Cloud <admin@randeepa.cloud>',
+            to: 'shamal@randeepa.com, Viraj.randeepa@gmail.com, erangarandeepa@gmail.com, samantha@randeepa.com, rukmalpolo@gmail.com',
+            // to: 'shamal@randeepa.com',
+            subject: 'Unaudited Stock Reviews',
+            html: HTMLString
+        }
+
+        transporter.sendMail(mailOptions, function(err) {
+            if(err) {
+                console.log(err)
+            } else {
+                console.log(Func.getDateTime() + " sendUnauditedStockReviews() complete")
             }
         })
     })
