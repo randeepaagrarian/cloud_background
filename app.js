@@ -15,6 +15,9 @@ reportScheduler.second = 0
 reportScheduler.minute = 0
 reportScheduler.hour = 6
 
+require('./incomplete_sales')
+require('./stock_reports')
+
 let sendTaskReport = schedule.scheduleJob(reportScheduler, function() {
     console.log(Func.getDateTime() + " Scheduling sendTaskReport()")
     async.series([
@@ -73,8 +76,8 @@ let sendTaskReport = schedule.scheduleJob(reportScheduler, function() {
 
         const mailOptions = {
             from: 'Randeepa Cloud <admin@randeepa.cloud>',
-            to: 'shamal@randeepa.com, dimuthu@randeepa.com, rukmalpolo@gmail.com, samantha@randeepa.com, erangarandeepa@gmail.com',
-            // to: 'shamal@randeepa.com',
+            // to: 'allcompany@randeepa.com, dimuthu@randeepa.com, rukmalpolo@gmail.com, samantha@randeepa.com, erangarandeepa@gmail.com',
+            to: 'allcompany@randeepa.com',
             subject: 'Daily Task Summary for ' + Func.getYesterday('-'),
             html: HTMLString
         }
@@ -87,116 +90,6 @@ let sendTaskReport = schedule.scheduleJob(reportScheduler, function() {
             }
         })
 
-    })
-})
-
-let sendIncompleteSalesReport = schedule.scheduleJob(reportScheduler, function() {
-    console.log(Func.getDateTime() + " Scheduling sendIncompleteSalesReport()")
-    async.series([
-        function(callback) {
-            Database.getIncompleteSalesFrom201806(callback)
-        }
-    ], function(err, data) {
-
-        const sales = data[0]
-
-        let HTMLString = "<html><head><style> body { font-family: arial, sans-serif; } table { border-collapse: collapse; width: 100%; } td, th { border: 1px solid #dddddd; text-align: left; padding: 8px; } </style></head><body>";
-
-        HTMLString = HTMLString + "<h4>Incomplete Sales from 2018-06 to 2020-10-18</h4>"
-        HTMLString = HTMLString + "<p>There are <b>" + sales.length + "</b> incomplete sales from 2018-06 to 2020-10-18</p>"
-
-        HTMLString = HTMLString +  "<table><thead> <th>ID</th> <th>Officer</th> <th>Date</th> <th>Cloud Date</th> <th>Pending For</th> <th>Dealer Name</th> <th>Chassis No</th> <th>Customer Name</th> <th>Customer Contact</th> <th>Sale Type</th> </thead> <tbody>"
-        for(let i = 0; i < sales.length; i++) {
-            if(i % 2 == 0) {
-                HTMLString = HTMLString + "<tr style='background-color: #f2f2f2;'>"
-            } else {
-                HTMLString = HTMLString + "<tr style='background: #FFF;'>"
-            }
-            HTMLString = HTMLString + "<td><a href='https://www.randeepa.cloud/sale/cloudIDInfo?cloudID=" + sales[i].id + "'>" + sales[i].id + "</a>" + "</td><td>" + sales[i].officer + "</td><td>" + sales[i].date + "</td><td>" + sales[i].sys_date + "</td><td>" + sales[i].pending_for + " days</td><td>" + sales[i].dealer_name + "</td><td>" + sales[i].chassis_no + "</td><td>" + sales[i].customer_name + "</td><td>" + sales[i].customer_contact + "</td><td>" + sales[i].sale_type + "</td></tr>"
-        }
-
-        HTMLString = HTMLString + "</tbody></table></body></html>"
-
-        let transporter = nodemailer.createTransport({
-            host: 'smtp.zoho.com',
-            port: 465,
-            secure: true,
-            auth: {
-                user: 'admin@randeepa.cloud',
-                pass: args.adminEmailPassword
-            }
-        })
-
-        const mailOptions = {
-            from: 'Randeepa Cloud <admin@randeepa.cloud>',
-            to: 'shamal@randeepa.com, dimuthu@randeepa.com, rukmalpolo@gmail.com, samantha@randeepa.com, erangarandeepa@gmail.com, prasad.randeepa@gmail.com',
-            // to: 'shamal@randeepa.com',
-            subject: 'Incomplete Sales from 2018-06 to 2020-10-18',
-            html: HTMLString
-        }
-
-        transporter.sendMail(mailOptions, function(err) {
-            if(err) {
-                console.log(err)
-            } else {
-                console.log(Func.getDateTime() + " sendIncompleteSalesReport() complete")
-            }
-        })
-    })
-})
-
-let sendIncompleteSalesReportNewManagement = schedule.scheduleJob(reportScheduler, function() {
-    console.log(Func.getDateTime() + " Scheduling sendIncompleteSalesReportNewManagement()")
-    async.series([
-        function(callback) {
-            Database.getIncompleteSalesNewManagement(callback)
-        }
-    ], function(err, data) {
-
-        const sales = data[0]
-
-        let HTMLString = "<html><head><style> body { font-family: arial, sans-serif; } table { border-collapse: collapse; width: 100%; } td, th { border: 1px solid #dddddd; text-align: left; padding: 8px; } </style></head><body>";
-
-        HTMLString = HTMLString + "<h4>[NEW MANAGEMENT] Incomplete Sales from 2020-10-19</h4>"
-        HTMLString = HTMLString + "<p>There are <b>" + sales.length + "</b> incomplete sales from 2020-10-19</p>"
-
-        HTMLString = HTMLString +  "<table><thead> <th>ID</th> <th>Officer</th> <th>Date</th> <th>Cloud Date</th> <th>Pending For</th> <th>Dealer Name</th> <th>Chassis No</th> <th>Customer Name</th> <th>Customer Contact</th> <th>Sale Type</th> </thead> <tbody>"
-        for(let i = 0; i < sales.length; i++) {
-            if(i % 2 == 0) {
-                HTMLString = HTMLString + "<tr style='background-color: #f2f2f2;'>"
-            } else {
-                HTMLString = HTMLString + "<tr style='background: #FFF;'>"
-            }
-            HTMLString = HTMLString + "<td><a href='https://www.randeepa.cloud/sale/cloudIDInfo?cloudID=" + sales[i].id + "'>" + sales[i].id + "</a>" + "</td><td>" + sales[i].officer + "</td><td>" + sales[i].date + "</td><td>" + sales[i].sys_date + "</td><td>" + sales[i].pending_for + " days</td><td>" + sales[i].dealer_name + "</td><td>" + sales[i].chassis_no + "</td><td>" + sales[i].customer_name + "</td><td>" + sales[i].customer_contact + "</td><td>" + sales[i].sale_type + "</td></tr>"
-        }
-
-        HTMLString = HTMLString + "</tbody></table></body></html>"
-
-        let transporter = nodemailer.createTransport({
-            host: 'smtp.zoho.com',
-            port: 465,
-            secure: true,
-            auth: {
-                user: 'admin@randeepa.cloud',
-                pass: args.adminEmailPassword
-            }
-        })
-
-        const mailOptions = {
-            from: 'Randeepa Cloud <admin@randeepa.cloud>',
-            to: 'shamal@randeepa.com, dimuthu@randeepa.com, rukmalpolo@gmail.com, samantha@randeepa.com, erangarandeepa@gmail.com, prasad.randeepa@gmail.com',
-            // to: 'shamal@randeepa.com',
-            subject: '[NEW MANAGEMENT] Incomplete Sales from 2020-10-19',
-            html: HTMLString
-        }
-
-        transporter.sendMail(mailOptions, function(err) {
-            if(err) {
-                console.log(err)
-            } else {
-                console.log(Func.getDateTime() + " sendIncompleteSalesReportNewManagement() complete")
-            }
-        })
     })
 })
 
@@ -239,8 +132,8 @@ let sendPendingServicesReport = schedule.scheduleJob(reportScheduler, function()
 
         const mailOptions = {
             from: 'Randeepa Cloud <admin@randeepa.cloud>',
-            to: 'shamal@randeepa.com, dimuthu@randeepa.com, erangarandeepa@gmail.com, sewwandieu@yahoo.com, 123dilanka@gmail.com, supundk94@gmail.com',
-            // to: 'shamal@randeepa.com',
+            // to: 'allcompany@randeepa.com, dimuthu@randeepa.com, erangarandeepa@gmail.com, sewwandieu@yahoo.com, 123dilanka@gmail.com, supundk94@gmail.com',
+            to: 'allcompany@randeepa.com',
             subject: 'Pending Services',
             html: HTMLString
         }
@@ -308,8 +201,8 @@ let sendUnauditedStockReviews = schedule.scheduleJob(reportScheduler, function()
 
         const mailOptions = {
             from: 'Randeepa Cloud <admin@randeepa.cloud>',
-            to: 'shamal@randeepa.com, Viraj.randeepa@gmail.com, erangarandeepa@gmail.com, samantha@randeepa.com, rukmalpolo@gmail.com',
-            // to: 'shamal@randeepa.com',
+            // to: 'allcompany@randeepa.com, Viraj.randeepa@gmail.com, erangarandeepa@gmail.com, samantha@randeepa.com, rukmalpolo@gmail.com',
+            to: 'allcompany@randeepa.com',
             subject: 'Unaudited Stock Reviews',
             html: HTMLString
         }
@@ -321,27 +214,5 @@ let sendUnauditedStockReviews = schedule.scheduleJob(reportScheduler, function()
                 console.log(Func.getDateTime() + " sendUnauditedStockReviews() complete")
             }
         })
-    })
-})
-
-let sendPendingServicesTextMessages = schedule.scheduleJob(reportScheduler, function() {
-    console.log(Func.getDateTime() + " Scheduling sendPendingServicesTextMessages()")
-    async.series([
-        function(callback) {
-            Database.getPendingServicesByTechnician(callback)
-        }
-    ], function(err, data) {
-        let api = '15572917316573'
-
-        let rawData = data[0]
-
-        for(let i = 0; i < rawData.length;  i++) {
-            let message = 'Good Morning, ' + rawData[i].technician_name + ". Your pending services are " + rawData[i].service_ids
-            request('https://cpsolutions.dialog.lk/index.php/cbs/sms/send?destination=' + rawData[i].telephone + '&q=' + api + '&message=' + message, { json: true }, function(err, res, body) {
-
-            })
-        }
-
-        console.log(Func.getDateTime() + " sendPendingServicesTextMessages() complete")
     })
 })
