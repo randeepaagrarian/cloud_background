@@ -205,3 +205,47 @@ Func.prepareStocksByAgeHTML = function(stock) {
         HTMLString = HTMLString + "</tbody></table></body></html>"
         return HTMLString
 }
+
+Func.preparePendingServicesHTML = function(sales) {
+    let HTMLString = "<html><head><style> body { font-family: arial, sans-serif; } table { border-collapse: collapse; width: 100%; } td, th { border: 1px solid #dddddd; text-align: left; padding: 8px; } </style></head><body>";
+
+        HTMLString = HTMLString + "<h2 style='font-family: Arial, Helvetica, sans-serif;'>Pending Services</h2>"
+        HTMLString = HTMLString + "<p>There are <b>" + sales.length + "</b> pending services</p>"
+
+        HTMLString = HTMLString +  `<table><thead>
+            <th>ID</th> 
+            <th>Date</th> 
+            <th>Pending For</th> 
+            <th>Issue</th> 
+            <th>Technician</th> 
+            <th>Sale Date</th> 
+            <th>Model</th>  
+            <th>Region</th>  
+            <th>Product Group</th>  
+            <th>Chassis No</th> 
+            <th>Customer Name</th> 
+            <th>Customer Contact</th>
+        </thead> <tbody>`
+        for(let i = 0; i < sales.length; i++) {
+            if(i % 2 == 0) {
+                HTMLString = HTMLString + "<tr style='background-color: #f2f2f2;'>"
+            } else {
+                HTMLString = HTMLString + "<tr style='background: #FFF;'>"
+            }
+            HTMLString = HTMLString + 
+                "<td><a href='https://www.randeepa.cloud/service/serviceInfo?serviceID="+sales[i].id+"'>"+sales[i].id+"</a>" + "</td><td>" 
+                + sales[i].date + "</td><td><font color='red'>" + sales[i].days + " days</font></td><td>" + sales[i].issue + "</td><td>" 
+                + sales[i].technician_name + "</td><td>" 
+                + sales[i].s_sale_date + "</td><td>" 
+                + sales[i].s_model_name + "</td><td>" 
+                + sales[i].region_name + "</td><td>" 
+                + sales[i].model_group + "</td><td>" 
+                + sales[i].s_chassis_no + "</td><td>" 
+                + sales[i].s_customer_name + "</td><td>" 
+                + sales[i].s_customer_contact + "</td></tr>"
+        }
+
+        HTMLString = HTMLString + "</tbody></table></body></html>"
+
+        return HTMLString
+}

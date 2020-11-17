@@ -17,6 +17,7 @@ reportScheduler.hour = 6
 
 require('./incomplete_sales')
 require('./stock_reports')
+require('./services_reports')
 
 let sendTaskReport = schedule.scheduleJob(reportScheduler, function() {
     console.log(Func.getDateTime() + " Scheduling sendTaskReport()")
@@ -90,61 +91,6 @@ let sendTaskReport = schedule.scheduleJob(reportScheduler, function() {
             }
         })
 
-    })
-})
-
-let sendPendingServicesReport = schedule.scheduleJob(reportScheduler, function() {
-    console.log(Func.getDateTime() + " Scheduling sendPendingServicesReport()")
-    async.series([
-        function(callback) {
-            Database.getPendingServices(callback)
-        }
-    ], function(err, data) {
-
-        const sales = data[0]
-
-        let HTMLString = "<html><head><style> body { font-family: arial, sans-serif; } table { border-collapse: collapse; width: 100%; } td, th { border: 1px solid #dddddd; text-align: left; padding: 8px; } </style></head><body>";
-
-        HTMLString = HTMLString + "<h2 style='font-family: Arial, Helvetica, sans-serif;'>Pending Services</h2>"
-        HTMLString = HTMLString + "<p>There are <b>" + sales.length + "</b> pending services</p>"
-
-        HTMLString = HTMLString +  "<table><thead> <th>ID</th> <th>Date</th> <th>Pending For</th> <th>Issue</th> <th>Technician</th> <th>Sale Date</th> <th>Chassis No</th> <th>Model</th>  <th>Customer Name</th> <th>Customer Contact</th></thead> <tbody>"
-        for(let i = 0; i < sales.length; i++) {
-            if(i % 2 == 0) {
-                HTMLString = HTMLString + "<tr style='background-color: #f2f2f2;'>"
-            } else {
-                HTMLString = HTMLString + "<tr style='background: #FFF;'>"
-            }
-            HTMLString = HTMLString + "<td><a href='https://www.randeepa.cloud/service/serviceInfo?serviceID="+sales[i].id+"'>"+sales[i].id+"</a>" + "</td><td>" + sales[i].date + "</td><td><font color='red'>" + sales[i].days + " days</font></td><td>" + sales[i].issue + "</td><td>" + sales[i].technician_name + "</td><td>" + sales[i].s_sale_date + "</td><td>" + sales[i].s_chassis_no + "</td><td>" + sales[i].s_model_name + "</td><td>" + sales[i].s_customer_name + "</td><td>" + sales[i].s_customer_contact + "</td></tr>"
-        }
-
-        HTMLString = HTMLString + "</tbody></table></body></html>"
-
-        let transporter = nodemailer.createTransport({
-            host: 'smtp.zoho.com',
-            port: 465,
-            secure: true,
-            auth: {
-                user: 'admin@randeepa.cloud',
-                pass: args.adminEmailPassword
-            }
-        })
-
-        const mailOptions = {
-            from: 'Randeepa Cloud <admin@randeepa.cloud>',
-            // to: 'allcompany@randeepa.com, dimuthu@randeepa.com, erangarandeepa@gmail.com, sewwandieu@yahoo.com, 123dilanka@gmail.com, supundk94@gmail.com',
-            to: 'allcompany@randeepa.com',
-            subject: 'Pending Services',
-            html: HTMLString
-        }
-
-        transporter.sendMail(mailOptions, function(err) {
-            if(err) {
-                console.log(err)
-            } else {
-                console.log(Func.getDateTime() + " sendPendingServicesReport() complete")
-            }
-        })
     })
 })
 
