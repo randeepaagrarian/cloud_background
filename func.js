@@ -114,6 +114,60 @@ Func.prepareIncompleteSalesHTML = function(sales) {
         return HTMLString
 }
 
+Func.prepareVerifiedSalesHTML = function(sales) {
+    let HTMLString = "<html><head><style> body { font-family: arial, sans-serif; } table { border-collapse: collapse; width: 100%; } td, th { border: 1px solid #dddddd; text-align: left; padding: 8px; } </style></head><body>";
+
+        HTMLString = HTMLString + "<h2 style='font-family: Arial, Helvetica, sans-serif;'>Unverified Sales</h2>"
+        HTMLString = HTMLString + "<p>There are <b>" + sales.length + "</b> unverified sales</p>"
+
+        HTMLString = HTMLString +  `
+            <table>
+                <thead>
+                    <th>ID</th>
+                    <th>Date</th>
+                    <th>Pending For</th>
+                    <th>Model</th>
+                    <th>Region</th>
+                    <th>Product Group</th>
+                    <th>Officer</th>
+                    <th>Sale Type</th>
+                    <th>Dealer</th>
+                    <th>Chassis Number</th>
+                    <th>Customer Name</th>
+                    <th>Customer Contact</th>
+                </thead>
+                <tbody>`
+        
+        for(let i = 0; i < sales.length; i++) {
+            HTMLString = HTMLString + 
+                "<tr><td><a href='https://www.randeepa.cloud/sale/cloudIDInfo?cloudID=" + sales[i].id + "'>" + sales[i].id + "</a>" + "</td>" + 
+                "<td>" + sales[i].sys_date + "</td>";
+
+            if(parseInt(sales[i].pending_for) < 2) {
+                HTMLString = HTMLString + "<td style='background-color: #064a17; color: #FFFFFF;'>"
+            } else if(parseInt(sales[i].pending_for) < 5) {
+                HTMLString = HTMLString + "<td style='background-color: #731909; color: #FFFFFF;'>"
+            } else {
+                HTMLString = HTMLString + "<td style='background-color: #e63415; color: #FFFFFF;'>"
+            }
+
+            HTMLString = HTMLString + sales[i].pending_for + " days</td>" + 
+                "<td>" + sales[i].model_name + "</td>" + 
+                "<td>" + sales[i].region + "</td>" + 
+                "<td>" + sales[i].model_group + "</td>" + 
+                "<td>" + sales[i].officer + "</td>" + 
+                "<td>" + sales[i].sale_type + "</td>" + 
+                "<td>" + sales[i].dealer_name + "</td>" + 
+                "<td>" + sales[i].chassis_no + "</td>" + 
+                "<td>" + sales[i].customer_name + "</td>" + 
+                "<td>" + sales[i].customer_contact + "</td>" + 
+            "</tr>"
+        }
+
+        HTMLString = HTMLString + "</tbody></table></body></html>"
+        return HTMLString
+}
+
 Func.prepareWeeklyStockReviewsHTML = function(reviews) {
     let HTMLString = "<html><head><style> body { font-family: arial, sans-serif; } table { border-collapse: collapse; width: 100%; } td, th { border: 1px solid #dddddd; text-align: left; padding: 8px; } </style></head><body>";
 

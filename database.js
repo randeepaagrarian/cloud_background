@@ -104,6 +104,33 @@ Database.getIncompleteSalesFrom2019New = function(types, callback) {
     })
 }
 
+Database.getUnverifiedSalesFrom2019 = function(types, callback) {
+    MySql.pool.getConnection(function(pool_err, connection) {
+        if(pool_err) {
+            return callback(pool_err, null)
+        }
+
+        connection.query(`
+            SELECT sale.id, sys_date, DATEDIFF(NOW(), sale.sys_date) as pending_for, M.name AS model_name, R.name as region, MG.name AS model_group, user.name as officer, sale_type.name as sale_type, dealer.name as dealer_name, chassis_no, customer_name, customer_contact 
+            FROM sale 
+            LEFT JOIN dealer ON sale.location_fk = dealer.id 
+            LEFT JOIN model M ON M.id = sale.model
+            LEFT JOIN model_group MG ON MG.id = M.model_group_id
+            LEFT JOIN region R ON R.id = sale.region
+            LEFT JOIN user ON sale.officer = user.username 
+            LEFT JOIN sale_type ON sale.sale_type = sale_type.id 
+            WHERE verified = 0 AND DATE(sys_date) >= '2019-01-01' AND sale.deleted = 0 AND sale.sale_type IN (?)
+            ORDER BY pending_for DESC;
+        `, [types], function(err, rows, fields) {
+            connection.release()
+            if(err) {
+                return callback(err, null)
+            }
+            callback(err, rows)
+        })
+    })
+}
+
 Database.stockReviewsByDealer = function(back_days, callback) {
     MySql.pool.getConnection(function(pool_err, connection) {
         if(pool_err) {

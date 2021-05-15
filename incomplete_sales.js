@@ -24,3 +24,20 @@ let sendNormalIncompleteSlaesFrom2019 = schedule.scheduleJob("0 6 * * *", functi
         Func.sendMail('allcompany@randeepa.com', 'Incomplete Sales [AGRIVEST]', agrivestSalesHTML)
     })
 })
+
+let sendUnverifiedSlaesFrom2019 = schedule.scheduleJob("0 6 * * *", function() {
+    console.log(Func.getDateTime() + " Scheduling sendUnverifiedSlaesFrom2019()")
+    async.series([
+        function(callback) {
+            Database.getUnverifiedSalesFrom2019([1, 2, 3, 4], callback)
+        }
+    ], function(err, data) {
+        if (err) {
+            console.log(err)
+        }
+
+        const unverifiedSalesHTML = Func.prepareVerifiedSalesHTML(data[0])
+
+        Func.sendMail('finance_administration@randeepa.com', 'Unverified Sales', unverifiedSalesHTML)
+    })
+})
