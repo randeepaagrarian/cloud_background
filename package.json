@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/randeepaagrarian/cloud_background#readme",
   "dependencies": {
-    "async": "^3.0.1",
+    "async": "^3.2.2",
     "mysql": "^2.17.1",
     "node-schedule": "^1.3.2",
     "nodemailer": "^6.2.1",
